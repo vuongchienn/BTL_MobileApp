@@ -5,6 +5,9 @@ import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../data/datasources/auth_remote_data_source.dart'; // 👈 import lớp bạn đã có
 
+import 'package:go_router/go_router.dart';
+import '../../../../core/utils/auth_storage.dart';
+import 'package:btl_mobileapp/core/routing/app_routes.dart';
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -55,31 +58,47 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _handleLogin() async {
-  final email = emailController.text;
-  final password = passwordController.text;
+  final email = emailController.text.trim();
+  final password = passwordController.text.trim();
+
+  if (email.isEmpty || password.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Vui lòng nhập đầy đủ thông tin.')),
+    );
+    return;
+  }
 
   setState(() => isLoading = true);
 
   try {
-    await loginUseCase(email, password);
+    // Gọi usecase (đảm bảo usecase trả về token hoặc user data)
+    final result = await loginUseCase(email, password);
 
-    if (!mounted) return;
+    // 🔐 Nếu loginUseCase trả về token:
+    if (result != null && result['data'] != null) {
+      await AuthStorage.saveToken(result['data']); // lưu token
+      if (!mounted) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Đăng nhập thành công ✅')),
-    );
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Đăng nhập thành công ✅')),
+      );
 
-    // Điều hướng sau khi login thành công
-    // Navigator.pushReplacementNamed(context, '/home');
+      // ✅ Điều hướng sang trang Home
+      context.go(AppRoutes.home);
+    } else {
+      throw Exception('Không nhận được token từ server.');
+    }
+
   } catch (e) {
-    print("Login error: $e"); // Debug lỗi
+    print("❌ Login error: $e");
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Đăng nhập thất bại: $e')),
     );
   } finally {
-    setState(() => isLoading = false);
+    if (mounted) setState(() => isLoading = false);
   }
 }
+
 
   @override
   Widget build(BuildContext context) {
@@ -234,14 +253,18 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Text("Bạn chưa có tài khoản? "),
-                      Text(
-                        "Đăng ký",
-                        style: TextStyle(color: Color(0xFFEF6820)),
-                      ),
+                    children: [
+                      const Text("Bạn chưa có tài khoản? "),
+                      TextButton(onPressed: () => context.go(AppRoutes.register)
+                      ,child: const Text(
+                          "Đăng ký",
+                          style: TextStyle(
+                            color: Color(0xFFEF6820),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),)
                     ],
-                  )
+                  ),
                 ],
               ],
             ),
