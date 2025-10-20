@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:btl_mobileapp/core/routing/app_routes.dart';
 import 'package:intl/intl.dart';
 import 'package:dio/dio.dart';
 import '../../domain/entities/note.dart';
@@ -10,7 +11,7 @@ import '../../domain/usecases/delete_note_usecase.dart';
 import '../../data/datasources/note_remote_data_source.dart';
 import '../../data/repositories/note_repository_impl.dart';
 import 'package:btl_mobileapp/core/utils/auth_storage.dart';
-import 'package:btl_mobileapp/core/routing/app_routes.dart';
+
 
 class NotePage extends StatefulWidget {
   const NotePage({super.key});

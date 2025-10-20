@@ -15,6 +15,11 @@ import '/features/auth/presentation/pages/reset_password_success_page.dart';
 import '/features/home/presentation/pages/home_page.dart';
 import '/features/notes/presentation/pages/note_page.dart';
 
+import '/features/tasks/presentation/pages/all_tasks_page.dart';
+import '/features/tasks/presentation/pages/today_page.dart';
+import '/features/tasks/presentation/pages/next3days_page.dart';
+import '/features/tasks/presentation/pages/next7days_page.dart';
+
 class AppGoRouter {
   static final GoRouter appRouter = GoRouter(
     initialLocation: AppRoutes.login,
@@ -45,6 +50,22 @@ class AppGoRouter {
         path: AppRoutes.resetPasswordSuccess,
         builder: (context, state) => const ResetPasswordSuccessPage(),
       ),
+       GoRoute(
+      path: AppRoutes.today,
+      builder: (context, state) => const TodayPage(),
+    ),
+    GoRoute(
+      path: AppRoutes.all,
+      builder: (context, state) => const AllTasksPage(),
+    ),
+    GoRoute(
+      path: AppRoutes.next3Days,
+      builder: (context, state) => const Next3DaysPage(),
+    ),
+    GoRoute(
+      path: AppRoutes.next7Days,
+      builder: (context, state) => const Next7DaysPage(),
+    ),
     ],
 
   );
