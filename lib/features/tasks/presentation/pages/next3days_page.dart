@@ -8,7 +8,7 @@ class Next3DaysPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return const TaskListPage(
       title: '3 ngày tới',
-      type: 'next3days',
+      type: 'three_days',
     );
   }
 }

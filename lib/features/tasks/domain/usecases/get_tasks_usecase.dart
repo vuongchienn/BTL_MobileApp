@@ -9,4 +9,12 @@ class GetTasksUseCase {
   Future<Map<String, List<TaskEntity>>> call(String type) {
     return repository.getTasksByType(type);
   }
+
+  Future<Map<String, List<TaskEntity>>> getCompletedTasks() {
+    return repository.getCompletedTasks();
+  }
+
+  Future<Map<String, List<TaskEntity>>> getDeletedTasks() {
+    return repository.getDeletedTasks();
+  }
 }

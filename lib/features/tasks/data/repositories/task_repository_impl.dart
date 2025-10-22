@@ -1,7 +1,7 @@
 import '../../domain/entities/task.dart';
 import '../../domain/repositories/task_repository.dart';
 import '../datasources/task_remote_data_source.dart';
-import 'package:flutter/material.dart';
+
 
 class TaskRepositoryImpl implements TaskRepository {
   final TaskRemoteDataSource remoteDataSource;
@@ -12,6 +12,17 @@ class TaskRepositoryImpl implements TaskRepository {
   Future<Map<String, List<TaskEntity>>> getTasksByType(String type) {
     return remoteDataSource.getTasks(type);
   }
+
+  @override
+  Future<Map<String, List<TaskEntity>>> getCompletedTasks() {
+    return remoteDataSource.getCompletedTasks();
+  }
+
+  @override
+  Future<Map<String, List<TaskEntity>>> getDeletedTasks() {
+    return remoteDataSource.getDeletedTasks();
+  }
+
    @override
   Future<TaskEntity?> createTask({
     required String title,

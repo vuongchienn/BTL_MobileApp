@@ -2,6 +2,8 @@ import '../entities/task.dart';
 
 abstract class TaskRepository {
   Future<Map<String, List<TaskEntity>>> getTasksByType(String type);
+  Future<Map<String, List<TaskEntity>>> getCompletedTasks(); // Thêm phương thức này
+  Future<Map<String, List<TaskEntity>>> getDeletedTasks(); //
   Future<TaskEntity?> createTask({
     required String title,
     required String description,
@@ -15,4 +17,5 @@ abstract class TaskRepository {
     DateTime? repeatDueDate,
     List<int>? tagIds,
   });
+
 }
