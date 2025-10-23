@@ -28,4 +28,6 @@ abstract class TaskRepository {
     required int priority, 
   });
 
+Future<bool> deleteTask(int taskId);
+Future<bool> completeTask(int taskId);
 }

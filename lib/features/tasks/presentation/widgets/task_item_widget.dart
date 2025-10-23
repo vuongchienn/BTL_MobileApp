@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../../domain/usecases/delete_task_usecase.dart';
+import '../../domain/usecases/complete_task_usecase.dart';
 
 class TaskItemWidget extends StatelessWidget {
   final int id;
@@ -12,7 +14,11 @@ class TaskItemWidget extends StatelessWidget {
   final bool isDeleted;
   final Function()? onEdit;
   final Function()? onDelete;
+  final VoidCallback? onDeleted; // thêm vào
+  final DeleteTaskUseCase? onDeleteUseCase;
+  final CompleteTaskUseCase? onCompleteUseCase;
   final bool isSelected;
+
 
   const TaskItemWidget({
     Key? key,
@@ -26,6 +32,9 @@ class TaskItemWidget extends StatelessWidget {
     this.isDeleted = false,
     this.onEdit,
     this.onDelete,
+    this.onDeleted,
+    this.onDeleteUseCase, 
+    this.onCompleteUseCase,
     this.isSelected = false,
   }) : super(key: key);
 
@@ -57,14 +66,92 @@ class TaskItemWidget extends StatelessWidget {
                   if (onEdit != null) onEdit!();
                 },
               ),
+             ListTile(
+  leading: const Icon(Icons.delete, color: Colors.red),
+  title: const Text('Xóa task'),
+  onTap: () async {
+    Navigator.pop(context);
+
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Xác nhận'),
+        content: const Text('Bạn có chắc muốn xóa task này không?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Hủy'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Xóa'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm != true) return;
+
+    if (onDeleteUseCase != null) {
+      final success = await onDeleteUseCase!.call(id); // dùng id
+      print(id);
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Xóa task thành công')),
+        );
+        if (onDeleted != null) onDeleted!(); // reload danh sách
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Xóa task thất bại')),
+        );
+      }
+    }
+  },
+),
+
+
               ListTile(
-                leading: const Icon(Icons.delete, color: Colors.red),
-                title: const Text('Xóa task'),
-                onTap: () {
-                  Navigator.pop(context);
-                  if (onDelete != null) onDelete!();
-                },
-              ),
+  leading: const Icon(Icons.check_circle, color: Colors.green),
+  title: const Text('Hoàn thành'),
+  onTap: () async {
+    Navigator.pop(context);
+
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Xác nhận'),
+        content: const Text('Bạn có chắc muốn đánh dấu task này là hoàn thành?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Hủy'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Hoàn thành'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm != true) return;
+
+    if (onCompleteUseCase != null) {
+      final success = await onCompleteUseCase!.call(id);
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Đánh dấu hoàn thành thành công')),
+        );
+        if (onDeleted != null) onDeleted!(); // reload danh sách
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Hoàn thành task thất bại')),
+        );
+      }
+    }
+  },
+),
+
             ],
           ),
         );
