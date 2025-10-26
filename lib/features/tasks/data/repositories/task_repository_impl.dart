@@ -84,4 +84,9 @@ class TaskRepositoryImpl implements TaskRepository {
   Future<bool> completeTask(int taskId) async {
     return remoteDataSource.completeTask(taskId);
   }
+  @override
+  Future<Map<String, List<TaskEntity>>> searchTasksByTitle(String title) async {
+    return await remoteDataSource.searchTasksByTitle(title);
+  }
+
 }

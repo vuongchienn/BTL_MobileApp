@@ -1,13 +1,16 @@
 import 'package:btl_mobileapp/features/auth/data/repositories/auth_repository_impl.dart';
+import '../../data/datasources/auth_remote_data_source.dart'; 
 import 'package:btl_mobileapp/features/auth/domain/usecases/login_user.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../data/datasources/auth_remote_data_source.dart'; // 👈 import lớp bạn đã có
+// 👈 import lớp bạn đã có
 
 import 'package:go_router/go_router.dart';
 import '../../../../core/utils/auth_storage.dart';
 import 'package:btl_mobileapp/core/routing/app_routes.dart';
+
+import '../../../../core/routing/auth_stream_service.dart';
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -77,6 +80,7 @@ class _LoginPageState extends State<LoginPage> {
     // 🔐 Nếu loginUseCase trả về token:
     if (result != null && result['data'] != null) {
       await AuthStorage.saveToken(result['data']); // lưu token
+      await authStreamService.notifyChange(); // router sẽ refresh
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
