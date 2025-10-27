@@ -230,4 +230,51 @@ Future<bool> deleteTask(int taskId) async {
     }
   }
 
+ Future<bool> updateStatusToDoing(int taskId) async {
+  try {
+    final response = await dio.post('/task/updateStatusToDoing/$taskId');
+    print('🟢 UpdateStatusToDoing status: ${response.statusCode}');
+    print('🟢 UpdateStatusToDoing response: ${response.data}');
+
+    return response.statusCode == 200; // Chỉ kiểm tra trạng thái HTTP
+  } catch (e) {
+    print('❌ Lỗi khi hủy hoàn thành task: $e');
+    return false;
+  }
+}
+
+
+Future<bool> deleteBin(int taskDetailId) async {
+    try {
+      final response = await dio.delete('/task/deleteBin/$taskDetailId');
+      print('🟢 DeleteBin status: ${response.statusCode}');
+      print('🟢 DeleteBin response: ${response.data}');
+
+      if (response.statusCode == 200) {
+        final data = response.data as Map<String, dynamic>;
+        return data['data'] == true; // Kiểm tra trường 'data' từ API
+      }
+      return false;
+    } catch (e) {
+      print('❌ Lỗi khi xóa từ thùng rác: $e');
+      return false;
+    }
+  }
+
+  Future<bool> deleteAllBinTasks() async {
+    try {
+      final response = await dio.delete('/task/deleteAllBin');
+      print('🟢 DeleteAllBin status: ${response.statusCode}');
+      print('🟢 DeleteAllBin response: ${response.data}');
+
+      if (response.statusCode == 200) {
+        final data = response.data as Map<String, dynamic>;
+        return data['data'] == true; // Kiểm tra trường 'data' từ API
+      }
+      return false;
+    } catch (e) {
+      print('❌ Lỗi khi xóa tất cả task trong thùng rác: $e');
+      return false;
+    }
+  }
 }

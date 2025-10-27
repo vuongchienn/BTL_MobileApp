@@ -28,8 +28,10 @@ abstract class TaskRepository {
     required int priority, 
   });
 
-Future<bool> deleteTask(int taskId);
-Future<bool> completeTask(int taskId);
-Future<Map<String, List<TaskEntity>>> searchTasksByTitle(String title);
-
+  Future<bool> deleteTask(int taskId);
+  Future<bool> completeTask(int taskId);
+  Future<Map<String, List<TaskEntity>>> searchTasksByTitle(String title);
+  Future<bool> updateStatusToDoing(int taskId) ;
+  Future<bool> deleteBin(int taskDetailId); // Thêm phương thức xóa từ thùng rác
+  Future<bool> deleteAllBinTasks(); // Thêm phương thức xóa tất cả
 }

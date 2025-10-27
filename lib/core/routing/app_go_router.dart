@@ -28,19 +28,27 @@ class AppGoRouter {
     initialLocation: AppRoutes.login,
     debugLogDiagnostics: true,
       redirect: (context, state) async {
-    final token = await AuthStorage.getToken();
-    final path = state.uri.path;
+        final token = await AuthStorage.getToken();
+        final path = state.uri.path;
 
-    final loggingIn = path == AppRoutes.login || path == AppRoutes.register;
+        // Các route cho phép truy cập mà không cần login
+        final publicRoutes = [
+          AppRoutes.login,
+          AppRoutes.register,
+          AppRoutes.forgotPassword,
+          AppRoutes.verifyOtp,
+          AppRoutes.resetPassword,
+          AppRoutes.resetPasswordSuccess,
+        ];
 
-    // Nếu chưa đăng nhập và cố vào route cần bảo vệ -> login
-    if (token == null && !loggingIn) return AppRoutes.login;
+        final isPublic = publicRoutes.contains(path);
 
-    // Nếu đã đăng nhập mà vào login/register -> home
-    if (token != null && loggingIn) return AppRoutes.home;
+        if (token == null && !isPublic) return AppRoutes.login;
+        if (token != null && isPublic) return AppRoutes.home;
 
-    return null; // không redirect
-  },
+        return null;
+      },
+
 
     routes:[
         GoRoute(path: AppRoutes.home, builder: (context, state) => const HomePage()),
